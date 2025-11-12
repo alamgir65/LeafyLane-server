@@ -32,17 +32,25 @@ const run = async () => {
         await client.connect();
 
         const db = client.db("leafyLaneDB");
-        const plantsCollection = db.collection("plants");
+        const propertiesCollection = db.collection("properties");
 
-        app.get('/plants', async (req, res) => {
-            const cursor = plantsCollection.find();
+        app.get('/properties', async (req, res) => {
+            const cursor = propertiesCollection.find();
             const results = await cursor.toArray();
             res.send(results);
         })
 
-        app.post('/plants', async(req, res) => {
+        app.post('/properties', async(req, res) => {
             const newPlant = req.body;
-            const result = await plantsCollection.insertOne(newPlant);
+            const result = await propertiesCollection.insertOne(newPlant);
+            res.send(result);
+        })
+
+        app.get('/properties/:id', async(req, res) => {
+            console.log('property calling');
+            const id = req.params.id;
+            const query = {_id : (id)};
+            const result = await propertiesCollection.findOne(query);
             res.send(result);
         })
 
