@@ -33,6 +33,26 @@ const run = async () => {
 
         const db = client.db("leafyLaneDB");
         const propertiesCollection = db.collection("properties");
+        const usersCollection = db.collection('users');
+
+        // USERS APIs
+        app.post('/users', async (req, res) => {
+            const newUser = req.body;
+            const email = req.body.email;
+            const query = { email: email }
+            const existingUser = await usersCollection.findOne(query);
+
+            if (existingUser) {
+                res.send({ message: 'user already exits. do not need to insert again' })
+            }
+            else {
+                const result = await usersCollection.insertOne(newUser);
+                res.send(result);
+            }
+        })
+
+
+        // all properties api's are here
 
         app.get('/properties', async (req, res) => {
             const cursor = propertiesCollection.find();
@@ -40,9 +60,15 @@ const run = async () => {
             res.send(results);
         })
 
+        app.get('/latest-properties', async(req, res) => {
+            const cursor = propertiesCollection.find().sort({created_at :-1}).limit(6);
+            const result = await cursor.toArray();
+            res.send(result);
+        })
+
         app.post('/properties', async(req, res) => {
-            const newPlant = req.body;
-            const result = await propertiesCollection.insertOne(newPlant);
+            const newProperty = req.body;
+            const result = await propertiesCollection.insertOne(newProperty);
             res.send(result);
         })
 
@@ -51,6 +77,13 @@ const run = async () => {
             const id = req.params.id;
             const query = {_id : (id)};
             const result = await propertiesCollection.findOne(query);
+            res.send(result);
+        })
+
+        app.delete('/properties/:id' , async(req, res) => {
+            const id = req.params.id;
+            const query = {_id: id};
+            const result = await propertiesCollection.deleteOne(query);
             res.send(result);
         })
 
