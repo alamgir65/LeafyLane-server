@@ -29,7 +29,7 @@ app.get('/', (req, res) => {
 
 const run = async () => {
     try {
-        await client.connect();
+        // await client.connect();
 
         const db = client.db("leafyLaneDB");
         const propertiesCollection = db.collection("properties");
@@ -163,7 +163,7 @@ const run = async () => {
 
 
 
-        await client.db("admin").command({ ping: 1 });
+        // await client.db("admin").command({ ping: 1 });
         console.log("Pinged your deployment. You successfully connected to MongoDB!");
     }
     finally {
