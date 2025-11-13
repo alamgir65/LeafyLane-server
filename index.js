@@ -4,15 +4,14 @@ const app = express();
 const cors = require('cors');
 const port = process.env.PORT || 3000;
 const { ObjectId } = require('mongodb');
+require('dotenv').config();
+
 
 app.use(express.json());
 app.use(cors());
 
-// leafylaneDBUser
-// sy0C9KEAbJYSwI4f
+const uri = `mongodb+srv://${process.env.DB_USER}:${process.env.DB_PASSWORD}@alamgir.ilrz28i.mongodb.net/?appName=alamgir`;
 
-const uri = "mongodb+srv://leafylaneDBUser:sy0C9KEAbJYSwI4f@alamgir.ilrz28i.mongodb.net/?appName=alamgir";
-// const uri = `mongodb+srv://${process.env.DB_USER}:${process.env.DB_PASSWORD}@alamgir.ilrz28i.mongodb.net/?appName=alamgir`;
 
 const client = new MongoClient(uri, {
     serverApi: {
