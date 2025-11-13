@@ -35,6 +35,7 @@ const run = async () => {
         const db = client.db("leafyLaneDB");
         const propertiesCollection = db.collection("properties");
         const usersCollection = db.collection('users');
+        const ratingsCollection = db.collection('ratings');
 
         // USERS APIs
         app.post('/users', async (req, res) => {
@@ -51,6 +52,16 @@ const run = async () => {
                 res.send(result);
             }
         })
+
+
+        // Rating & review's all api's are start here
+
+        app.post('/ratings', async(req, res) => {
+            const newRating = req.body;
+            const result = await ratingsCollection.insertOne(newRating);
+            res.send(result);
+        })
+        
 
 
         // all properties api's are here
@@ -106,14 +117,14 @@ const run = async () => {
         app.get('/properties/:id', async (req, res) => {
             console.log('property calling');
             const id = req.params.id;
-            const query = { _id: (id) };
+            const query = { _id: new ObjectId(id) };
             const result = await propertiesCollection.findOne(query);
             res.send(result);
         })
 
         app.delete('/properties/:id', async (req, res) => {
             const id = req.params.id;
-            const query = { _id: id };
+            const query = { _id: new ObjectId(id) };
             const result = await propertiesCollection.deleteOne(query);
             res.send(result);
         })
