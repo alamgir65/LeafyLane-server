@@ -56,27 +56,50 @@ const run = async () => {
 
         // Rating & review's all api's are start here
 
-        app.post('/ratings', async(req, res) => {
+        app.post('/ratings', async (req, res) => {
             const newRating = req.body;
             const result = await ratingsCollection.insertOne(newRating);
             res.send(result);
         })
-        
+
+        app.get('/ratings', async (req, res) => {
+            const name = req.query.name;
+            const query = {};
+            if (name) {
+                query.reviewer_name = name;
+            }
+            console.log(query);
+            const cursor = ratingsCollection.find(query);
+            const results = await cursor.toArray();
+            res.send(results);
+        })
+
 
 
         // all properties api's are here
 
         app.get('/properties', async (req, res) => {
             const email = req.query.email;
+            const title = req.query.title;
             const query = {};
+
             if (email) {
                 query.email = email;
+            } else if (title) {
+                query.title = { $regex: title, $options: 'i' };
             }
+
             console.log(query);
-            const cursor = propertiesCollection.find(query);
-            const results = await cursor.toArray();
-            res.send(results);
-        })
+
+            try {
+                const results = await propertiesCollection.find(query).toArray();
+                res.send(results);
+            } catch (error) {
+                console.error('Error fetching properties:', error);
+                res.status(500).send({ message: 'Failed to fetch properties' });
+            }
+        });
+
 
         app.patch('/properties/:id', async (req, res) => {
             try {
