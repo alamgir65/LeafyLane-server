@@ -81,6 +81,7 @@ const run = async () => {
         app.get('/properties', async (req, res) => {
             const email = req.query.email;
             const title = req.query.title;
+            const sort = req.query.sort;
             const query = {};
 
             if (email) {
@@ -93,7 +94,16 @@ const run = async () => {
 
             try {
                 const results = await propertiesCollection.find(query).toArray();
-                res.send(results);
+                if(sort){
+                    if(sort == "date"){
+                        const final = (await propertiesCollection.find(query).sort({created_at : -1}).toArray());
+                        res.send(final);
+                    }else if(sort == "price"){
+                        const final = (await propertiesCollection.find(query).sort({price_min : -1}).toArray());
+                        res.send(final);
+                    }
+                }
+                else res.send(results);
             } catch (error) {
                 console.error('Error fetching properties:', error);
                 res.status(500).send({ message: 'Failed to fetch properties' });
